@@ -1,5 +1,8 @@
 package com.codewithidris;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -22,18 +25,7 @@ public class Main {
         System.out.println("Please enter an Input:");
         do {
             String input = sc.nextLine();
-
-            if(input.equalsIgnoreCase("n")){
-                System.out.println("Your total payment bill: ");
-                int i = 0;
-                for(Double output: priceList) {
-                    System.out.println(outputTextList.get(i) + ": " + output);
-                    i++;
-                }
-                System.out.println("Sales Taxes: " + totalTax);
-                System.out.println("Total: " + totalPreis);
-                System.exit(0);
-            }
+            giveResultEndProgram(input);
             if(input.contains(" at ")){
                 String[] inputArray = input.split(" ");
                 quantity = Integer.parseInt(inputArray[0]);
@@ -41,30 +33,7 @@ public class Main {
 
                 String outputText = input.substring(0 , input.indexOf(" at "));
 
-                if(input.contains("imported")){
-                    tax = importedTax;
-                    if(input.contains("book") || input.contains("chocolate") || input.contains("pills")){
-
-                        taxAmount = quantity * price * tax / 100;
-                        price = quantity * price + quantity * price * tax / 100;
-
-                    }
-                    else {
-                        tax += basictax;
-                        taxAmount = quantity * price * tax / 100;
-                        price = quantity * price + quantity * price * tax / 100;
-                    }
-                }
-                else {
-                    if (input.contains("book") || input.contains("chocolate") || input.contains("pills")) {
-                        taxAmount = 0;
-                        price = quantity * price;
-                    } else {
-                        tax = basictax;
-                        taxAmount = quantity * price * tax / 100;
-                        price = quantity * price + quantity * price * tax / 100;
-                    }
-                }
+                checkTheInputs(input);
 
                 priceList.add(price);
                 outputTextList.add(outputText);
@@ -78,7 +47,49 @@ public class Main {
 
         }while(true);
     }
-    public void ProgramWillBeClosed() {
+    public static void giveResultEndProgram(String input) {
+        if(input.equalsIgnoreCase("n")){
+            double roundedTax;
+            double roundedPrice;
+            System.out.println("Your total payment bill: ");
+            int i = 0;
+            for(Double output: priceList) {
+                double roundedOutput = (double) Math.round(output * 100) / 100;
+                System.out.println(outputTextList.get(i) + ": " + roundedOutput);
+                i++;
+            }
+            roundedTax = (double)Math.round(totalTax * 100) / 100;
+            roundedPrice = (double)Math.round(totalPreis * 100) / 100;
+            System.out.println("Sales Taxes: " + roundedTax);
+            System.out.println("Total: " + roundedPrice);
+            System.exit(0);
+        }
+    }
 
+    public static void checkTheInputs(String input) {
+
+        if(input.contains("imported")){
+            tax = importedTax;
+            if(input.contains("book") || input.contains("chocolate") || input.contains("pills")){
+                taxAmount = quantity * price * tax / 100;
+                price =  quantity * price + quantity * price * tax / 100;
+
+            }
+            else {
+                tax += basictax;
+                taxAmount = quantity * price * tax / 100;
+                price =  quantity * price + quantity * price * tax / 100;
+            }
+        }
+        else {
+            if (input.contains("book") || input.contains("chocolate") || input.contains("pills")) {
+                taxAmount = 0;
+                price = quantity * price;
+            } else {
+                tax = basictax;
+                taxAmount = quantity * price * tax / 100;
+                price = quantity * price + quantity * price * tax / 100;
+            }
+        }
     }
 }
